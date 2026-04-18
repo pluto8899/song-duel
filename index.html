@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Song Success Duel</title>
+    <title>Stream Stakes</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -11,27 +11,22 @@
 <body>
 
     <div id="home-screen" class="screen">
-        <h1 class="logo">SONG<br><span class="accent">DUEL</span></h1>
+        <h1 class="logo">STREAM<br><span class="accent">STAKES</span></h1>
         
         <p id="user-welcome" class="accent hidden">Welcome, Player!</p>
-        
-        <div id="username-section" class="hidden">
-            <input type="text" id="username-input" placeholder="Arcade Name" maxlength="15">
-            <button id="save-name-btn" class="main-btn auth-btn save-btn" onclick="saveUsername()">SAVE</button>
-        </div>
 
         <div class="description-box">
             <h3>HOW TO PLAY</h3>
             <ul>
-                <li>Listen to clips of mystery songs.</li>
-                <li>Guess which one has more <strong>total plays</strong>.</li>
-                <li>Every correct guess adds to your score.</li>
-                <li>Lose 3 lives, and the show is over!</li>
+                <li>Listen to the audio clips.</li>
+                <li>Guess if the mystery track has <strong>HIGHER</strong> or <strong>LOWER</strong> total plays than the first track.</li>
+                <li>Build your streak. Lose 3 lives, and it's over!</li>
             </ul>
         </div>
 
         <div class="menu-buttons">
-            <button class="main-btn pulse" onclick="startGame()">ENTER THE ARENA</button>
+            <button class="main-btn pulse" onclick="startGame('global')">GLOBAL CLASH (Any Artist)</button>
+            <button class="main-btn pulse" style="background: var(--neon-purple); margin-top: 15px;" onclick="startGame('artist')">DISCOGRAPHY DUEL (Same Artist)</button>
             <button class="main-btn secondary" onclick="showLeaderboard()">LEADERBOARD</button>
             <button id="auth-btn" class="main-btn auth-btn" onclick="toggleAuth()">SIGN IN WITH GOOGLE</button>
         </div>
@@ -42,35 +37,48 @@
             <div class="stat"><span class="label">SCORE</span><span id="current-score">0</span></div>
             <div class="stat"><span class="label">BEST</span><span id="best-score">0</span></div>
             <div class="stat"><span class="label">LIVES</span><span id="lives-display">❤️❤️❤️</span></div>
+            <div class="stat"><span class="label">MODE</span><span id="mode-display" style="color:var(--neon-purple); font-size: 1rem;">GLOBAL</span></div>
+            
+            <div class="nav-btns">
+                <button class="icon-btn" onclick="confirmHome()" title="Main Menu">⌂</button>
+            </div>
         </div>
 
         <div class="duel-area">
-            <div id="card-a" class="card" onclick="checkWinner('A')">
-                <div class="img-container"><img id="img-a" class="pixelated" src=""></div>
+            <div id="card-a" class="card">
+                <div class="img-container"><img id="img-a" src=""></div>
                 <div class="info-overlay">
-                    <h2 id="name-a" class="text-hidden">Song Name</h2>
-                    <p id="artist-a" class="text-hidden">Artist Name</p>
+                    <h2 id="name-a">Song Name</h2>
+                    <p id="artist-a">Artist Name</p>
                 </div>
                 <button id="btn-audio-a" class="play-btn" onclick="toggleAudio('A', event)">▶ PLAY</button>
-                <div id="plays-a" class="count hidden"></div>
+                <div id="plays-a" class="count" style="color: white; text-shadow: 0 0 10px white;">Loading...</div>
+                <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">TOTAL PLAYS</p>
                 <a id="link-a" class="promo-link hidden" target="_blank" onclick="event.stopPropagation()">APPLE MUSIC ↗</a>
             </div>
 
             <div class="vs-container"><div class="vs-circle">VS</div></div>
 
-            <div id="card-b" class="card" onclick="checkWinner('B')">
+            <div id="card-b" class="card">
                 <div class="img-container"><img id="img-b" class="pixelated" src=""></div>
                 <div class="info-overlay">
                     <h2 id="name-b" class="text-hidden">Song Name</h2>
                     <p id="artist-b" class="text-hidden">Artist Name</p>
                 </div>
                 <button id="btn-audio-b" class="play-btn" onclick="toggleAudio('B', event)">▶ PLAY</button>
-                <div id="plays-b" class="count hidden"></div>
+                
+                <div id="betting-buttons" style="margin-top: 15px;">
+                    <button class="main-btn glow-btn" style="width: 100%; margin-bottom: 10px; padding: 10px; font-size: 1.2rem;" onclick="checkWinner('higher')">HIGHER ▲</button>
+                    <button class="main-btn" style="width: 100%; background: var(--neon-pink); padding: 10px; font-size: 1.2rem; cursor: pointer; border:none; border-radius: 50px; font-weight: 900;" onclick="checkWinner('lower')">LOWER ▼</button>
+                </div>
+
+                <div id="plays-b" class="count hidden" style="color: var(--neon-green);"></div>
+                <p id="plays-b-label" class="hidden" style="font-size: 0.8rem; color: #888; margin-top: 5px;">TOTAL PLAYS</p>
                 <a id="link-b" class="promo-link hidden" target="_blank" onclick="event.stopPropagation()">APPLE MUSIC ↗</a>
             </div>
         </div>
 
-        <h2 id="status-msg">WHO HAD MORE PLAYS?</h2>
+        <h2 id="status-msg">HIGHER OR LOWER?</h2>
         <button id="next-btn" class="hidden glow-btn" onclick="setupRound()">NEXT DUEL ⏭️</button>
     </div>
 
@@ -87,15 +95,37 @@
         </div>
     </div>
 
+    <div id="confirm-modal" class="hidden popup-overlay">
+        <div class="modal" style="border-color: var(--neon-pink);">
+            <h2 id="confirm-title" style="color: var(--neon-pink);">ABANDON RUN?</h2>
+            <p id="confirm-body" class="modal-subtext">Your current streak will be lost forever.</p>
+        
+            <div class="modal-buttons" style="margin-top: 25px; display: flex; gap: 10px; justify-content: center;">
+                <button class="main-btn" id="confirm-yes" style="background: var(--neon-pink); color: white;">YES, QUIT</button>
+                <button class="main-btn secondary" id="confirm-no">STAY</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="username-modal" class="hidden popup-overlay">
+        <div class="modal">
+            <h2 class="accent">CLAIM YOUR NAME</h2>
+            <p class="modal-subtext">This will be your unique identity on the leaderboard.</p>
+            <input type="text" id="new-username-input" placeholder="Arcade Name" maxlength="15">
+            <p id="username-error" class="error-msg"></p>
+            <button class="main-btn glow-btn" onclick="claimUsername()">SAVE NAME</button>
+        </div>
+    </div>
+
     <div id="leaderboard-screen" class="screen hidden">
         <h1 class="logo small">GLOBAL <span class="accent">TOP 10</span></h1>
-        
+    
         <div id="leaderboard-list" class="leaderboard-container">
-            <p>Loading scores...</p>
-        </div>
+            </div>
 
         <p>Personal Best: <span id="lb-best" class="accent">0</span></p>
-        <button class="main-btn" onclick="showHome()">BACK TO MENU</button>
+    
+        <button class="main-btn" onclick="showScreen('home-screen')">BACK TO MENU</button>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>

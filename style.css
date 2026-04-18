@@ -47,9 +47,8 @@ body {
 .duel-area { display: flex; justify-content: center; align-items: center; gap: 15px; margin: 20px 0; }
 .card { 
     background: var(--card-bg); padding: 15px; border-radius: 25px; 
-    cursor: pointer; width: 280px; transition: 0.3s ease; border: 1px solid rgba(255,255,255,0.1);
+    width: 280px; border: 1px solid rgba(255,255,255,0.1);
 }
-.card:hover { transform: translateY(-5px); border-color: var(--neon-purple); }
 
 .img-container { width: 100%; aspect-ratio: 1/1; border-radius: 15px; overflow: hidden; margin-bottom: 15px; }
 img { width: 100%; height: 100%; object-fit: cover; }
@@ -67,16 +66,18 @@ img { width: 100%; height: 100%; object-fit: cover; }
 .play-btn { 
     background: transparent; border: 2px solid var(--neon-green);
     padding: 10px 20px; border-radius: 50px; color: var(--neon-green);
-    font-weight: bold; cursor: pointer; min-width: 140px; 
+    font-weight: bold; cursor: pointer; min-width: 140px; margin-top: 10px;
 }
+.play-btn:hover { background: var(--neon-green); color: black; }
 
 .count { font-size: 1.5rem; font-weight: 900; color: var(--neon-green); margin-top: 15px; }
 
 /* Buttons & Modal */
 .main-btn {
     background: var(--neon-green); color: black; border: none; padding: 15px 40px;
-    border-radius: 50px; font-weight: 900; cursor: pointer;
+    border-radius: 50px; font-weight: 900; cursor: pointer; transition: 0.3s;
 }
+.main-btn:hover { opacity: 0.9; transform: scale(1.02); }
 .main-btn.secondary { background: #333; color: white; margin-top: 10px; }
 
 .auth-btn { background: transparent; border: 2px solid white; color: white; font-size: 0.9rem; margin-top: 15px; }
@@ -86,82 +87,120 @@ img { width: 100%; height: 100%; object-fit: cover; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(0, 255, 136, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); } }
 
 .glow-btn {
-    background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink));
-    color: white; border: none; padding: 15px 40px; border-radius: 50px; font-weight: 900;
-    box-shadow: 0 0 20px rgba(157, 80, 187, 0.6); cursor: pointer; transition: 0.3s; letter-spacing: 1px;
+    background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink)) !important;
+    color: white !important; border: none !important; font-weight: 900 !important;
+    box-shadow: 0 0 20px rgba(157, 80, 187, 0.6) !important; 
 }
-.glow-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px var(--neon-pink); }
+.glow-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px var(--neon-pink) !important; }
 
-#modal-overlay {
+.popup-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 100;
+    background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 200;
 }
+#modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 100; }
+
 .modal { background: var(--card-bg); padding: 40px; border-radius: 30px; border: 2px solid var(--neon-purple); }
 #final-score-display { font-size: 4rem; font-weight: 900; margin: 10px 0; }
 
-/* Success & Fail Flashes */
-@keyframes correctFlash {
-    0% { background: var(--bg); }
-    50% { background: #004422; }
-    100% { background: var(--bg); }
+/* Username Setup Styles */
+.modal-subtext { font-size: 0.9rem; color: #bbb; }
+#new-username-input {
+    background: rgba(0, 0, 0, 0.5); border: 2px solid var(--neon-purple);
+    color: white; padding: 15px; border-radius: 50px; font-family: 'Montserrat', sans-serif;
+    font-weight: bold; text-align: center; outline: none; width: 80%; margin: 15px 0; font-size: 1.1rem; transition: 0.3s;
 }
+#new-username-input:focus { box-shadow: 0 0 15px var(--neon-purple); }
+.error-msg { color: var(--neon-pink); font-size: 0.85rem; font-weight: bold; margin-top: -5px; margin-bottom: 15px; height: 15px; }
+
+/* Success & Fail Flashes */
+@keyframes correctFlash { 0% { background: var(--bg); } 50% { background: #004422; } 100% { background: var(--bg); } }
 .flash-correct { animation: correctFlash 0.5s ease; }
 
-@keyframes wrongFlash {
-    0% { background: var(--bg); }
-    50% { background: #4a0000; }
-    100% { background: var(--bg); }
-}
+@keyframes wrongFlash { 0% { background: var(--bg); } 50% { background: #4a0000; } 100% { background: var(--bg); } }
 .flash-wrong { animation: wrongFlash 0.5s ease; }
 
 /* Global Leaderboard Styles */
 .leaderboard-container {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 20px;
-    margin: 20px auto;
-    max-width: 450px;
-    text-align: left;
-    min-height: 200px;
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px; padding: 20px; margin: 20px auto; max-width: 450px; text-align: left; min-height: 200px;
 }
-
 .lb-entry {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 1.1rem;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 1.1rem;
 }
-
 .lb-entry:last-child { border-bottom: none; }
 .lb-rank { color: var(--neon-purple); font-weight: 900; width: 40px; }
 .lb-name { flex-grow: 1; color: #fff; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lb-score { color: var(--neon-green); font-weight: 900; font-size: 1.3rem; text-shadow: 0 0 10px rgba(0, 255, 136, 0.4); }
 
-/* Username Input Styles */
-#username-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+/* Promo Links */
+.promo-link {
+    display: inline-block; margin-top: 15px; color: var(--neon-purple); text-decoration: none;
+    font-size: 0.8rem; font-weight: bold; border: 1px solid var(--neon-purple);
+    padding: 5px 15px; border-radius: 20px; transition: 0.3s;
 }
+.promo-link:hover { background: var(--neon-purple); color: white; }
 
-#username-input {
-    background: rgba(0, 0, 0, 0.5);
-    border: 2px solid var(--neon-purple);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 50px;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: bold;
-    text-align: center;
-    outline: none;
-    width: 150px;
+
+/* Mid-game Restart Button */
+#scoreboard { position: relative; } /* Needed for button alignment */
+
+.restart-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #888;
+    font-size: 1.2rem;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
     transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#username-input:focus { box-shadow: 0 0 15px var(--neon-purple); }
-.save-btn { margin-top: 0 !important; padding: 10px 20px !important; }
+/* Mid-game Navigation Buttons */
+#scoreboard { position: relative; padding-right: 80px; }
+
+.nav-btns {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.icon-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #888;
+    font-size: 1.2rem;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.icon-btn:hover {
+    color: var(--neon-green);
+    border-color: var(--neon-green);
+    background: rgba(0, 255, 136, 0.1);
+}
+
+/* Specific hover for the Home button to distinguish it */
+.icon-btn[onclick="confirmHome()"]:hover {
+    color: var(--neon-purple);
+    border-color: var(--neon-purple);
+    background: rgba(157, 80, 187, 0.1);
+}
