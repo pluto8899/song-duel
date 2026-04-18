@@ -57,7 +57,7 @@ function toggleAuth() {
     } else {
         const provider = new firebase.auth.GoogleAuthProvider();
         auth.signInWithPopup(provider).catch(error => {
-            console.error("Login Failed:", error);
+            console.error("Login Failed:", error.message);
         });
     }
 }
