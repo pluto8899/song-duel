@@ -1,5 +1,4 @@
 const songPool = [
-    // Your original indie starters
     { artist: "Men I Trust", track: "Show Me How" },
     { artist: "Beach Fossils", track: "Down the Line" },
     { artist: "Crumb", track: "Locket" },
@@ -50,8 +49,6 @@ const songPool = [
     { artist: "Washed Out", track: "Feel It All Around" },
     { artist: "Real Estate", track: "It's Real" },
     { artist: "Slow Pulp", track: "High" },
-
-    // The Massive Expansion Starts Here
     { artist: "Surf Curse", track: "Freaks" },
     { artist: "Dayglow", track: "Can I Call You Tonight?" },
     { artist: "Wallows", track: "Are You Bored Yet?" },
@@ -108,7 +105,7 @@ const songPool = [
     { artist: "Tommy Guerrero", track: "Water In Your Hands" },
     { artist: "Skinshape", track: "I Didn't Know" },
     { artist: "El Michels Affair", track: "C.R.E.A.M." },
-    { episodic: "BADBADNOTGOOD", track: "Time Moves Slow" },
+    { artist: "BADBADNOTGOOD", track: "Time Moves Slow" },
     { artist: "Tom Misch", track: "Disco Yes" },
     { artist: "Jordan Rakei", track: "Mind's Eye" },
     { artist: "Alfa Mist", track: "Keep On" },
@@ -158,7 +155,7 @@ const songPool = [
     { artist: "Jack Stauber", track: "Buttercup" },
     { artist: "Vundabar", track: "Alien Blues" },
     { artist: "Destroy Boys", track: "I Threw Glass at My Friend's Eyes" },
-    { artist: "The Fretellis", track: "Chelsea Dagger" },
+    { artist: "The Fratellis", track: "Chelsea Dagger" },
     { artist: "Kaiser Chiefs", track: "Ruby" },
     { artist: "The Kooks", track: "Naive" },
     { artist: "Catfish and the Bottlemen", track: "Kathleen" },

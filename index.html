@@ -14,11 +14,16 @@
         <h1 class="logo">SONG<br><span class="accent">DUEL</span></h1>
         
         <p id="user-welcome" class="accent hidden">Welcome, Player!</p>
+        
+        <div id="username-section" class="hidden">
+            <input type="text" id="username-input" placeholder="Arcade Name" maxlength="15">
+            <button id="save-name-btn" class="main-btn auth-btn save-btn" onclick="saveUsername()">SAVE</button>
+        </div>
 
         <div class="description-box">
             <h3>HOW TO PLAY</h3>
             <ul>
-                <li>Listen to 10-second clips of mystery songs.</li>
+                <li>Listen to clips of mystery songs.</li>
                 <li>Guess which one has more <strong>total plays</strong>.</li>
                 <li>Every correct guess adds to your score.</li>
                 <li>Lose 3 lives, and the show is over!</li>
@@ -83,7 +88,12 @@
     </div>
 
     <div id="leaderboard-screen" class="screen hidden">
-        <h1 class="logo small">TOP <span class="accent">SCORES</span></h1>
+        <h1 class="logo small">GLOBAL <span class="accent">TOP 10</span></h1>
+        
+        <div id="leaderboard-list" class="leaderboard-container">
+            <p>Loading scores...</p>
+        </div>
+
         <p>Personal Best: <span id="lb-best" class="accent">0</span></p>
         <button class="main-btn" onclick="showHome()">BACK TO MENU</button>
     </div>

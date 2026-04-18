@@ -24,28 +24,44 @@ let activeCard = null;
 let score = 0;
 let lives = 3;
 let highScore = localStorage.getItem('mysteryDuelBest') || 0;
+let currentName = "Anonymous";
 
 // --- AUTHENTICATION LOGIC ---
 auth.onAuthStateChanged(user => {
     currentUser = user;
     const authBtn = document.getElementById('auth-btn');
     const welcomeMsg = document.getElementById('user-welcome');
+    const usernameSection = document.getElementById('username-section');
+    const usernameInput = document.getElementById('username-input');
 
     if (user) {
         authBtn.innerText = "SIGN OUT";
-        welcomeMsg.innerText = `Welcome, ${user.displayName.split(' ')[0]}!`;
-        welcomeMsg.classList.remove('hidden');
-
+        
+        // Check if they already have a saved custom name
         db.collection('users').doc(user.uid).get().then(doc => {
             if (doc.exists) {
-                highScore = Math.max(highScore, doc.data().highScore);
-                localStorage.setItem('mysteryDuelBest', highScore);
-                updateStatusDisplay();
+                highScore = Math.max(highScore, doc.data().highScore || 0);
+                currentName = doc.data().name || user.displayName.split(' ')[0];
+            } else {
+                // First time login, use Google's first name
+                currentName = user.displayName.split(' ')[0];
             }
+            
+            localStorage.setItem('mysteryDuelBest', highScore);
+            
+            welcomeMsg.innerText = `Welcome, ${currentName}!`;
+            welcomeMsg.classList.remove('hidden');
+            
+            // Show the username editor
+            usernameInput.value = currentName;
+            usernameSection.classList.remove('hidden');
+            
+            updateStatusDisplay();
         });
     } else {
         authBtn.innerText = "SIGN IN WITH GOOGLE";
         welcomeMsg.classList.add('hidden');
+        usernameSection.classList.add('hidden');
         highScore = localStorage.getItem('mysteryDuelBest') || 0;
         updateStatusDisplay();
     }
@@ -58,6 +74,28 @@ function toggleAuth() {
         const provider = new firebase.auth.GoogleAuthProvider();
         auth.signInWithPopup(provider).catch(error => {
             console.error("Login Failed:", error.message);
+        });
+    }
+}
+
+// --- USERNAME LOGIC ---
+function saveUsername() {
+    const inputVal = document.getElementById('username-input').value.trim();
+    if (!inputVal) {
+        alert("Your arcade name can't be empty!");
+        return;
+    }
+    if (currentUser) {
+        currentName = inputVal;
+        document.getElementById('user-welcome').innerText = `Welcome, ${currentName}!`;
+        
+        db.collection('users').doc(currentUser.uid).set({
+            name: currentName
+        }, { merge: true }).then(() => {
+            // Flash a success message on the button
+            const btn = document.getElementById('save-name-btn');
+            btn.innerText = "SAVED!";
+            setTimeout(() => btn.innerText = "SAVE", 2000);
         });
     }
 }
@@ -77,9 +115,40 @@ function showHome() {
     showScreen('home-screen');
 }
 
-function showLeaderboard() {
+async function showLeaderboard() {
     document.getElementById('lb-best').innerText = highScore;
+    const lbList = document.getElementById('leaderboard-list');
+    lbList.innerHTML = "<p>Loading global scores...</p>";
     showScreen('leaderboard-screen');
+
+    try {
+        const snapshot = await db.collection('users').orderBy('highScore', 'desc').limit(10).get();
+        lbList.innerHTML = "";
+        let rank = 1;
+        
+        if (snapshot.empty) {
+            lbList.innerHTML = "<p style='text-align:center; color:#888;'>No scores yet. Be the first!</p>";
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const entry = document.createElement('div');
+            entry.className = 'lb-entry';
+            const playerName = data.name || 'Anonymous';
+            
+            entry.innerHTML = `
+                <span class="lb-rank">#${rank}</span> 
+                <span class="lb-name">${playerName}</span> 
+                <span class="lb-score">${data.highScore}</span>
+            `;
+            lbList.appendChild(entry);
+            rank++;
+        });
+    } catch (error) {
+        console.error("Error fetching leaderboard:", error);
+        lbList.innerHTML = "<p style='text-align:center; color:#ff4444;'>Error loading scores. Please check your connection.</p>";
+    }
 }
 
 function showScreen(id) {
@@ -195,10 +264,10 @@ function checkWinner(choice) {
             highScore = score;
             localStorage.setItem('mysteryDuelBest', highScore);
             
-            // SAVE TO CLOUD IF LOGGED IN
+            // SAVE TO CLOUD WITH CUSTOM NAME
             if (currentUser) {
                 db.collection('users').doc(currentUser.uid).set({
-                    name: currentUser.displayName,
+                    name: currentName,
                     highScore: highScore
                 }, { merge: true });
             }
