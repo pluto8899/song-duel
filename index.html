@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Success Duel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+    <div id="home-screen" class="screen">
+        <h1 class="logo">SONG<br><span class="accent">DUEL</span></h1>
+        
+        <p id="user-welcome" class="accent hidden">Welcome, Player!</p>
+
+        <div class="description-box">
+            <h3>HOW TO PLAY</h3>
+            <ul>
+                <li>Listen to 10-second clips of mystery songs.</li>
+                <li>Guess which one has more <strong>total plays</strong>.</li>
+                <li>Every correct guess adds to your score.</li>
+                <li>Lose 3 lives, and the show is over!</li>
+            </ul>
+        </div>
+
+        <div class="menu-buttons">
+            <button class="main-btn pulse" onclick="startGame()">ENTER THE ARENA</button>
+            <button class="main-btn secondary" onclick="showLeaderboard()">LEADERBOARD</button>
+            <button id="auth-btn" class="main-btn auth-btn" onclick="toggleAuth()">SIGN IN WITH GOOGLE</button>
+        </div>
+    </div>
+
+    <div id="game-screen" class="screen hidden">
+        <div id="scoreboard">
+            <div class="stat"><span class="label">SCORE</span><span id="current-score">0</span></div>
+            <div class="stat"><span class="label">BEST</span><span id="best-score">0</span></div>
+            <div class="stat"><span class="label">LIVES</span><span id="lives-display">❤️❤️❤️</span></div>
+        </div>
+
+        <div class="duel-area">
+            <div id="card-a" class="card" onclick="checkWinner('A')">
+                <div class="img-container"><img id="img-a" class="pixelated" src=""></div>
+                <div class="info-overlay">
+                    <h2 id="name-a" class="text-hidden">Song Name</h2>
+                    <p id="artist-a" class="text-hidden">Artist Name</p>
+                </div>
+                <button id="btn-audio-a" class="play-btn" onclick="toggleAudio('A', event)">▶ PLAY</button>
+                <div id="plays-a" class="count hidden"></div>
+                <a id="link-a" class="promo-link hidden" target="_blank" onclick="event.stopPropagation()">APPLE MUSIC ↗</a>
+            </div>
+
+            <div class="vs-container"><div class="vs-circle">VS</div></div>
+
+            <div id="card-b" class="card" onclick="checkWinner('B')">
+                <div class="img-container"><img id="img-b" class="pixelated" src=""></div>
+                <div class="info-overlay">
+                    <h2 id="name-b" class="text-hidden">Song Name</h2>
+                    <p id="artist-b" class="text-hidden">Artist Name</p>
+                </div>
+                <button id="btn-audio-b" class="play-btn" onclick="toggleAudio('B', event)">▶ PLAY</button>
+                <div id="plays-b" class="count hidden"></div>
+                <a id="link-b" class="promo-link hidden" target="_blank" onclick="event.stopPropagation()">APPLE MUSIC ↗</a>
+            </div>
+        </div>
+
+        <h2 id="status-msg">WHO HAD MORE PLAYS?</h2>
+        <button id="next-btn" class="hidden glow-btn" onclick="setupRound()">NEXT DUEL ⏭️</button>
+    </div>
+
+    <div id="modal-overlay" class="hidden">
+        <div class="modal">
+            <h2 class="accent">GAME OVER</h2>
+            <p class="modal-label">YOUR FINAL SCORE</p>
+            <div id="final-score-display">0</div>
+            <p id="new-best-msg" class="hidden">✨ NEW PERSONAL BEST! ✨</p>
+            <div class="modal-buttons">
+                <button class="main-btn" onclick="shareScore()">SHARE SCORE</button>
+                <button class="main-btn secondary" onclick="showHome()">MAIN MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="leaderboard-screen" class="screen hidden">
+        <h1 class="logo small">TOP <span class="accent">SCORES</span></h1>
+        <p>Personal Best: <span id="lb-best" class="accent">0</span></p>
+        <button class="main-btn" onclick="showHome()">BACK TO MENU</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script src="songs.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
